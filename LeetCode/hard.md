@@ -84,7 +84,6 @@ If a star is present in the pattern, it will be in the second position \text{pat
 
 - Space Complexity: For every call to `match`, we will create those strings as described above, possibly creating duplicates. If memory is not freed, this will also take a total of O\big((T+P)2^{T + \frac{P}{2}}\big)O((T+P)2T+2P) space, even though there are only order O(T^2 + P^2)O(T2+P2) unique suffixes of PP and TT that are actually required. 
 
-
 ------
 
 #### Approach 2: Dynamic Programming
@@ -112,3 +111,255 @@ We proceed with the same recursion as in [Approach 1](https://leetcode.com/artic
 - Time Complexity: Let T, PT,P be the lengths of the text and the pattern respectively. The work for every call to `dp(i, j)` for i=0, ... ,Ti=0,...,T; j=0, ... ,Pj=0,...,P is done once, and it is O(1)O(1) work. Hence, the time complexity is O(TP)O(TP).
 - Space Complexity: The only memory we use is the O(TP)O(TP) boolean entries in our cache. Hence, the space complexity is O(TP)O(TP).
 
+## 23. Merge k Sorted List 
+
+Merge *k* sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+**Example:**
+
+```
+Input:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+Output: 1->1->2->3->4->4->5->6
+```
+
+## Solution
+
+------
+
+#### Approach 1: Brute Force
+
+**Intuition & Algorithm**
+
+- Traverse all the linked lists and collect the values of the nodes into an array.
+- Sort and iterate over this array to get the proper value of nodes.
+- Create a new sorted linked list and extend it with the new nodes.
+
+  ```c++
+  class Solution {
+  public:
+      ListNode* mergeKLists(vector<ListNode*>& lists) {
+          vector<int> temp;
+          ListNode* curr;
+          for(int i = 0; i < lists.size(); i++){
+              curr = lists[i];
+              while(curr){
+                  temp.push_back(curr->val);
+                  curr = curr->next;
+              }
+          }
+          ListNode* head = NULL;
+          if(!temp.empty()){
+              sort(temp.begin(),temp.end());
+              head = new ListNode(temp[0]);
+          }
+          curr = head;
+          for(int i = 1; i < temp.size(); i++){
+              ListNode* t = new ListNode(temp[i]);
+              curr->next = t;
+              curr = t;
+          }
+          return head;
+      }
+  };
+  ```
+
+
+
+**Complexity Analysis**
+
+- Time complexity : O(Nlog N)where NN is the total number of nodes.
+
+  - Collecting all the values costs O(N)O(N) time.
+  - A stable sorting algorithm costs O(N\log N)O(NlogN) time.
+  - Iterating for creating the linked list costs O(N)O(N) time.
+
+- Space complexity : O(N)O(N).
+
+  - Sorting cost O(N)O(N) space (depends on the algorithm you choose).
+
+  - Creating a new linked list costs O(N)O(N) space. 
+
+------
+
+#### Approach 2: Compare one by one
+
+**Algorithm**
+
+- Compare every \text{k}k nodes (head of every linked list) and get the node with the smallest value.
+- Extend the final sorted linked list with the selected nodes.
+
+```c++
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        ListNode nn = ListNode(0);
+        ListNode *temp, *root;
+        root = &nn;
+        temp = root;
+        while(1)
+        {
+            vector<pair<int,int> > v;
+            for(int i=0;i<lists.size();i++)
+            {
+                if(lists[i]!=NULL)
+                {
+                    v.push_back({lists[i]->val,i});
+                }
+            }
+            if(v.size()==0)
+                break;
+            auto p =std::min_element(v.begin(), v.end());
+            int ind = (*p).second;
+            temp->next = lists[ind];
+         lists[ind] = lists[ind]->next;
+            temp = temp->next;
+            
+        }
+        return root->next;
+        
+    }
+};
+```
+
+
+**Complexity Analysis**
+
+- Time complexity : O(kN)O(kN) where \text{k}k is the number of linked lists.
+
+  - Almost every selection of node in final linked costs O(k)O(k) (\text{k-1}k-1 times comparison).
+  - There are NN nodes in the final linked list.
+
+- Space complexity :
+
+  - O(n)O(n) Creating a new linked list costs O(n)O(n) space.
+
+  - O(1)O(1) It's not hard to apply in-place method - connect selected nodes instead of creating new nodes to fill the new linked list. 
+
+------
+
+#### Approach 3: Optimize Approach 2 by Priority Queue
+
+**Algorithm**
+
+Almost the same as the one above but optimize the **comparison process** by **priority queue**. You can refer [here](https://en.wikipedia.org/wiki/Priority_queue) for more information about it.
+
+
+```c++
+
+class Comp
+{ public:
+    bool operator()(const ListNode  *a, const ListNode *b)
+    {
+    return a->val  > b->val;
+    }
+};
+bool compare (const ListNode  *a, const ListNode *b)
+{
+    return a->val  < b->val;
+}
+#define pb push_back
+#define rep(i,a) for(int i=0; i<a; ++i)
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, Comp > pq;
+        vector<ListNode *> v;
+        if(lists.size()==0)
+                return NULL;
+        rep(i,lists.size())
+        {
+            if(lists[i]!=NULL)
+            {   
+                pq.push(lists[i]);
+            }
+        }
+        if(pq.size()==0)
+            return NULL;
+        ListNode *root,*temp,*next,*top;       
+        root = NULL;
+        int i=0;
+        while(!pq.empty())
+        {   top = pq.top();
+            next = pq.top()->next;
+            // top->next = NULL;
+            pq.pop();
+             if(next!=NULL)
+                    pq.push(next);
+            if(i==0)
+            {
+                temp = top;
+                root = temp;
+                i++;
+            }
+            else
+            {   temp->next = top;
+                temp = temp->next;        
+            }
+        }
+     return root;
+    }
+};
+```
+
+**Complexity Analysis**
+
+- Time complexity : O(N\log k)O(Nlogk) where \text{k}k is the number of linked lists.
+
+  - The comparison cost will be reduced to O(\log k)O(logk) for every pop and insertion to priority queue. But finding the node with the smallest value just costs O(1)O(1) time.
+  - There are NN nodes in the final linked list.
+
+- Space complexity :
+
+  - O(n)O(n) Creating a new linked list costs O(n)O(n) space.
+
+  - O(k)O(k) The code above present applies in-place method which cost O(1)O(1) space. And the priority queue (often implemented with heaps) costs O(k)O(k) space (it's far less than NN in most situations).
+
+------
+
+#### Approach 4: Merge lists one by one
+
+**Algorithm**
+
+Convert merge \text{k}k lists problem to merge 2 lists (\text{k-1}k-1) times. Here is the [merge 2 lists](https://leetcode.com/problems/merge-two-sorted-lists/description/) problem page.
+
+**Complexity Analysis**
+
+- Time complexity : O(kN)O(kN) where \text{k}k is the number of linked lists.
+
+  - We can merge two sorted linked list in O(n)O(n) time where nn is the total number of nodes in two lists.
+  - Sum up the merge process and we can get: O(\sum_{i=1}^{k-1} (i*(\frac{N}{k}) + \frac{N}{k})) = O(kN)O(∑i=1k−1(i∗(kN)+kN))=O(kN).
+
+- Space complexity : O(1)O(1)
+
+  - We can merge two sorted linked list in O(1)O(1) space. 
+
+------
+
+#### Approach 5: Merge with Divide And Conquer
+
+**Intuition & Algorithm**
+
+This approach walks alongside the one above but is improved a lot. We don't need to traverse most nodes many times repeatedly
+
+- Pair up \text{k}k lists and merge each pair.
+- After the first pairing, \text{k}k lists are merged into k/2k/2 lists with average 2N/k2N/k length, then k/4k/4, k/8k/8 and so on.
+- Repeat this procedure until we get the final sorted linked list.
+
+Thus, we'll traverse almost NN nodes per pairing and merging, and repeat this procedure about \log_{2}{k}log2k times.
+
+![Divide_and_Conquer](https://leetcode.com/articles/Figures/23/23_divide_and_conquer_new.png)
+
+<iframe src="https://leetcode.com/playground/8nnKQ4tP/shared" frameborder="0" width="100%" height="500" name="8nnKQ4tP" style="box-sizing: border-box;"></iframe>
+
+**Complexity Analysis**
+
+- Time complexity : O(N\log k)O(Nlogk) where \text{k}k is the number of linked lists.
+  - We can merge two sorted linked list in O(n)O(n) time where nn is the total number of nodes in two lists.
+  - Sum up the merge process and we can get: O\big(\sum_{i=1}^{log_{2}{k}}N \big)= O(N\log k)O(∑i=1log2kN)=O(Nlogk)
+- Space complexity : O(1)O(1)
+  - We can merge two sorted linked lists in O(1)O(1) space.

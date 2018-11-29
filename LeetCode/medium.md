@@ -226,7 +226,7 @@ The obvious brute force solution is to pick all possible starting and ending pos
 
 **Complexity Analysis**
 
-- Time complexity : O(n^3)O(n3). Assume that nn is the length of the input string, there are a total of \binom{n}{2} = \frac{n(n-1)}{2}(2n)=2n(n−1) such substrings (excluding the trivial solution where a character itself is a palindrome). Since verifying each substring takes O(n)O(n) time, the run time complexity is O(n^3)O(n3).
+- Time complexity : O($$n^3$$)O(n3). Assume that nn is the length of the input string, there are a total of \binom{n}{2} = \frac{n(n-1)}{2}(2n)=2n(n−1) such substrings (excluding the trivial solution where a character itself is a palindrome). Since verifying each substring takes O(n)O(n) time, the run time complexity is O(n^3)O(n3).
 
 - Space complexity : O(1)O(1). 
 
@@ -274,7 +274,7 @@ This yields a straight forward DP solution, which we first initialize the one an
 
 **Complexity Analysis**
 
-- Time complexity : O(n^2)O(n2). This gives us a runtime complexity of O(n^2)O(n2).
+- Time complexity : O($$n^2$$)O(n2). This gives us a runtime complexity of O(n^2)O(n2).
 - Space complexity : O(n^2)O(n2). It uses O(n^2)O(n2) space to store the table.
 
 **Additional Exercise**
@@ -392,3 +392,243 @@ public:
     }
 };
 ```
+
+
+
+## 22. Generate Parentheses 
+
+Given *n* pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given *n* = 3, a solution set is:
+
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+
+#### Approach 1: Brute Force
+
+**Intuition**
+
+We can generate all 2^{2n}22n sequences of `'('` and `')'` characters. Then, we will check if each one is valid.
+
+**Algorithm**
+
+To generate all sequences, we use a recursion. All sequences of length `n` is just `'('` plus all sequences of length `n-1`, and then `')'` plus all sequences of length `n-1`.
+
+To check whether a sequence is valid, we keep track of `balance`, the net number of opening brackets minus closing brackets. If it falls below zero at any time, or doesn't end in zero, the sequence is invalid - otherwise it is valid.
+
+```c++
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> ans;
+        for(int mask=0; mask < 1<<(2*n); mask++)
+        {
+            string s1= "";
+            if(__builtin_popcount(mask)!=n)
+                continue;
+            for(int i =0; i <2*n;i++)
+            {
+                if(mask&1<<i)
+                    s1+='(';
+                else
+                    s1+=')';
+            }
+            if(isValid(s1))
+            ans.push_back(s1);
+        }
+        return ans;
+    }
+    bool isValid(string s) {
+        stack<char> stk;
+        for(int i=0;i<s.size();i++)
+        {
+            if(s[i]=='('||s[i]=='{'||s[i]=='[')
+                stk.push(s[i]);
+            else
+            {
+                if(stk.empty())
+                    return false;
+                if(s[i]==')')
+                {
+                    if(stk.top()!='(')
+                        return false;
+                    else 
+                        stk.pop();
+                }
+                  if(s[i]=='}')
+                {
+                    if(stk.top()!='{')
+                        return false;
+                    else 
+                        stk.pop();
+                }
+                  if(s[i]==']')
+                {
+                    if(stk.top()!='[')
+                        return false;
+                    else 
+                        stk.pop();
+                }
+            }
+        }
+        if(stk.empty())
+            return true;
+        else
+            return false;
+    }
+};
+```
+**Complexity Analysis**
+
+- Time Complexity : O(2^{2n}n). For each of 2^{2n}sequences, we need to create and validate the sequence, which takes O(n)O(n) work.
+
+- Space Complexity : O(2^{2n}n)O(22nn). Naively, every sequence could be valid. See [Approach 3](https://leetcode.com/articles/generate-parentheses/#approach-3-closure-number) for development of a tighter asymptotic bound. 
+
+------
+
+#### Approach 2: Backtracking
+
+**Intuition and Algorithm**
+
+Instead of adding `'('` or `')'` every time as in [Approach 1](https://leetcode.com/articles/generate-parentheses/#approach-1-brute-force), let's only add them when we know it will remain a valid sequence. We can do this by keeping track of the number of opening and closing brackets we have placed so far.
+
+We can start an opening bracket if we still have one (of `n`) left to place. And we can start a closing bracket if it would not exceed the number of opening brackets.
+
+<iframe src="https://leetcode.com/playground/npPa38Mh/shared" frameborder="0" width="100%" height="378" name="npPa38Mh" style="box-sizing: border-box;"></iframe>
+
+**Complexity Analysis**
+
+Our complexity analysis rests on understanding how many elements there are in `generateParenthesis(n)`. This analysis is outside the scope of this article, but it turns out this is the `n`-th Catalan number $$\frac{1}{n+1}\binom{2n}{n}$$, which is bounded asymptotically by $$\frac{4^n}{n\sqrt{n}}$$.
+
+- Time Complexity : O ($$\frac{4^n}{\sqrt{n}}​$$ ). Each valid sequence has at most `n` steps during the backtracking procedure.
+
+- Space Complexity : O($$\frac{4^n}{\sqrt{n}}$$). as described above, and using O(n) space to store the sequence. 
+
+------
+
+#### Approach 3: Closure Number
+
+**Intuition**
+
+To enumerate something, generally we would like to express it as a sum of disjoint subsets that are easier to count.
+
+Consider the *closure number* of a valid parentheses sequence `S`: the least `index >= 0` so that `S[0], S[1], ..., S[2*index+1]` is valid. Clearly, every parentheses sequence has a unique *closure number*. We can try to enumerate them individually.
+
+**Algorithm**
+
+For each closure number `c`, we know the starting and ending brackets must be at index `0` and `2*c + 1`. Then, the `2*c` elements between must be a valid sequence, plus the rest of the elements must be a valid sequence.
+
+<iframe src="https://leetcode.com/playground/Z3ZYfRAo/shared" frameborder="0" width="100%" height="293" name="Z3ZYfRAo" style="box-sizing: border-box;"></iframe>
+
+**Complexity Analysis**
+
+- Time and Space Complexity : O(\dfrac{4^n}{\sqrt{n}})O(n4n). The analysis is similar to [Approach 2](https://leetcode.com/articles/generate-parentheses/#approach-2-backtracking).
+
+
+
+
+
+## 31. Next Permutation 
+
+Implement **next permutation**, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+If such arrangement is not possible, it must rearrange it as the lowest possible order (i.e, sorted in ascending order).
+
+The replacement must be **in-place** and use only constant extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+
+```
+1,2,3` → `1,3,2`
+`3,2,1` → `1,2,3`
+`1,1,5` → `1,5,1
+```
+
+## Summary
+
+We need to find the next lexicographic permutation of the given list of numbers than the number formed by the given array.
+
+## Solution
+
+------
+
+#### Approach 1: Brute Force
+
+**Algorithm**
+
+In this approach, we find out every possible permutation of list formed by the elements of the given array and find out the permutation which is just larger than the given one. But this one will be a very naive approach, since it requires us to find out every possible permutation which will take really long time and the implementation is complex. Thus, this approach is not acceptable at all. Hence, we move on directly to the correct approach.
+
+**Complexity Analysis**
+
+- Time complexity : O(n!)O(n!). Total possible permutations is n!n!.
+
+- Space complexity : O(n)O(n). Since an array will be used to store the permutations. 
+
+
+------
+
+#### Approach 2: Single Pass Approach
+
+**Algorithm**
+
+First, we observe that for any given sequence that is in descending order, no next larger permutation is possible. For example, no next permutation is possible for the following array: `[9, 5, 4, 3, 1]`
+
+We need to find the first pair of two successive numbers a[i]a[i] and a[i-1]a[i−1], from the right, which satisfy a[i] &gt; a[i-1]a[i]>a[i−1]. Now, no rearrangements to the right of a[i-1]a[i−1] can create a larger permutation since that subarray consists of numbers in descending order. Thus, we need to rearrange the numbers to the right of a[i-1]a[i−1] including itself.
+
+Now, what kind of rearrangement will produce the next larger number? We want to create the permutation just larger than the current one. Therefore, we need to replace the number a[i-1]a[i−1] with the number which is just larger than itself among the numbers lying to its right section, say a[j]a[j].
+
+![ Next Permutation ](https://leetcode.com/media/original_images/31_nums_graph.png)
+
+We swap the numbers a[i-1]a[i−1] and a[j]a[j]. We now have the correct number at index i-1i−1. But still the current permutation isn't the permutation that we are looking for. We need the smallest permutation that can be formed by using the numbers only to the right of a[i-1]a[i−1]. Therefore, we need to place those numbers in ascending order to get their smallest permutation.
+
+But, recall that while scanning the numbers from the right, we simply kept decrementing the index until we found the pair a[i]a[i] and a[i-1]a[i−1] where, a[i] &gt; a[i-1]a[i]>a[i−1]. Thus, all numbers to the right of a[i-1]a[i−1] were already sorted in descending order. Furthermore, swapping a[i-1]a[i−1] and a[j]a[j] didn't change that order. Therefore, we simply need to reverse the numbers following a[i-1]a[i−1] to get the next smallest lexicographic permutation.
+
+The following animation will make things clearer:
+
+![Next Permutation](https://leetcode.com/media/original_images/31_Next_Permutation.gif)
+
+```c++
+class Solution {
+public:
+    void nextPermutation(vector<int>& A) {
+        int n = A.size();
+    int ii = -1;
+    int jj = 0;
+    int i;
+    for(i=n-1;i>0;i--)
+        if(A[i-1]<A[i])
+        {  	ii = i-1;  
+            break;
+        }  
+    if(ii==-1) // already reverse sorted 
+    {  	reverse(A.begin(),A.end());
+    	return ;
+	}
+    for(int j =n-1;j>=ii+1;j--)
+       if(A[j]>A[ii])
+        { 	jj  = j; 
+            break;
+        }   
+    //swap
+    int temp = A[ii];
+    A[ii] = A[jj];
+    A[jj] = temp;
+    //reverse
+    reverse(A.begin()+ii+1,A.end());
+    }
+};
+```
+
+
+
+**Complexity Analysis**
+
+- Time complexity : O(n). In worst case, only two scans of the whole array are needed.
+- Space complexity : O(1). No extra space is used. In place replacements are done.
