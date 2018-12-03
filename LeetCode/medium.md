@@ -274,8 +274,8 @@ This yields a straight forward DP solution, which we first initialize the one an
 
 **Complexity Analysis**
 
-- Time complexity : O($$n^2$$)O(n2). This gives us a runtime complexity of O(n^2)O(n2).
-- Space complexity : O(n^2)O(n2). It uses O(n^2)O(n2) space to store the table.
+- Time complexity : O($$n^2$$) This gives us a runtime complexity of O(n^2).
+- Space complexity : O(n^2). It uses O(n^2) space to store the table.
 
 **Additional Exercise**
 
@@ -297,21 +297,15 @@ You might be asking why there are 2n - 12n−1 but not nn centers? The reason is
 
 **Complexity Analysis**
 
-- Time complexity : O(n^2)O(n2). Since expanding a palindrome around its center could take O(n)O(n) time, the overall complexity is O(n^2)O(n2).
+- Time complexity : O(n^2). Since expanding a palindrome around its center could take O(n) time, the overall complexity is O(n^2).
 
-- Space complexity : O(1)O(1). 
+- Space complexity : O(1). 
 
 ------
 
 #### Approach 5: Manacher's Algorithm
 
-There is even an O(n)O(n) algorithm called Manacher's algorithm, explained [here in detail](https://articles.leetcode.com/longest-palindromic-substring-part-ii/). However, it is a non-trivial algorithm, and no one expects you to come up with this algorithm in a 45 minutes coding session. But, please go ahead and understand it, I promise it will be a lot of fun.
-
-
-
-
-
-
+There is even an O(n) algorithm called Manacher's algorithm, explained [here in detail](https://articles.leetcode.com/longest-palindromic-substring-part-ii/). However, it is a non-trivial algorithm, and no one expects you to come up with this algorithm in a 45 minutes coding session. But, please go ahead and understand it, I promise it will be a lot of fun.
 
 
 
@@ -507,7 +501,7 @@ We can start an opening bracket if we still have one (of `n`) left to place. And
 
 Our complexity analysis rests on understanding how many elements there are in `generateParenthesis(n)`. This analysis is outside the scope of this article, but it turns out this is the `n`-th Catalan number $$\frac{1}{n+1}\binom{2n}{n}$$, which is bounded asymptotically by $$\frac{4^n}{n\sqrt{n}}$$.
 
-- Time Complexity : O ($$\frac{4^n}{\sqrt{n}}​$$ ). Each valid sequence has at most `n` steps during the backtracking procedure.
+- Time Complexity : O ($$\frac{4^n}{\sqrt{n}}$$ ). Each valid sequence has at most `n` steps during the backtracking procedure.
 
 - Space Complexity : O($$\frac{4^n}{\sqrt{n}}$$). as described above, and using O(n) space to store the sequence. 
 
@@ -570,7 +564,6 @@ In this approach, we find out every possible permutation of list formed by the e
 - Time complexity : O(n!)O(n!). Total possible permutations is n!n!.
 
 - Space complexity : O(n)O(n). Since an array will be used to store the permutations. 
-
 
 ------
 

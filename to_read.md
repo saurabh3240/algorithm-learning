@@ -8,15 +8,12 @@
 # Algorithms
 
 - KMP
-- - - 
 - RK
 - Fast Dijkstra 
 - Weighted union find with path compression WUFPC
 - FFT
 
 ##KosaRaju-Shamir 
-
-- 
 
 ### STRING
 
@@ -26,6 +23,15 @@ Manchester Algorithm : find longest palindrome substring in O(n)
 
 - 2 Sum
 - 3 Sum
+- n the element in a single linked list 
+  - use currr and follower two pointer
+    - first move curr to n step
+    - then move curr and follower synchronously to the end of list
+    - return follower
+- Coin Change : given an input x and a coins array determine minim coins to exchange X
+  - think recursively    1+ min( change(n-x)) for all  x in coins  (exponential complexity)
+  - check overflows and base cases
+  -  use DP to speed up O(n^2)
 - kth smallest/largest element in unsorted array
   - Sort the Array then  return element at K index. O(n *log n)
   - Make a min heap of array and remove K element to get kth smallest  O(n + k log n)
