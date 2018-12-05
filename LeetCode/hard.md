@@ -363,3 +363,76 @@ Thus, we'll traverse almost NN nodes per pairing and merging, and repeat this pr
   - Sum up the merge process and we can get: O\big(\sum_{i=1}^{log_{2}{k}}N \big)= O(N\log k)O(∑i=1log2kN)=O(Nlogk)
 - Space complexity : O(1)O(1)
   - We can merge two sorted linked lists in O(1)O(1) space.
+
+## 42. Trapping Rain Water 
+
+https://leetcode.com/articles/trapping-rain-water/
+
+## 44. Wild Card Matching
+
+- can be solve by as regular expression matcher dp space O(mn) and time  O(m,n)
+  - only last row results are neccessary space complexity can be reduced to O(n) where n = |s|
+
+
+    ```C++
+    class Solution {
+    public:
+        bool isMatch(string s, string p) {
+            int n = s.size();
+            int m = p.size();
+            vector<vector<bool> > v(m+1, vector<bool>(n+1,false));
+            v[0][0]=true;
+            for(int i=1;i<=m;i++)
+            {
+                if(p[i-1]=='*')
+                {
+                    v[i][0] = v[i-1][0];     
+                }
+                for(int j=1;j<=n;j++)
+                {
+                    if(p[i-1]=='?')
+                    {
+                        v[i][j] = max(v[i-1][j-1],v[i][j]);
+                    }
+                    else if(p[i-1]=='*')
+                    {
+                            v[i][j] =   max(v[i-1][j],v[i][j-1]);           
+                    }
+                    else
+                    {
+                        v[i][j] = p[i-1]==s[j-1] ? v[i-1][j-1]: false;
+                    }
+                }
+            }
+            return v[m][n];
+            
+        }
+    };
+    ```
+
+- Can solve greedy storing the last star position
+
+  - O(m,n) time and space is O(1)
+
+- ```C++
+  class Solution {
+  public:
+      bool isMatch(string s, string p) {
+          int star=-1;
+          int ss;
+          int pindex = 0,sindex=0;
+          int size = s.size();
+         while (sindex<size){
+              if ((p[pindex]=='?')||(p[pindex]==s[sindex])){sindex++;pindex++;continue;} 
+              else if (p[pindex]=='*'){star=pindex++; ss=sindex;continue;} 
+              if (star!=-1){ pindex = star+1; sindex=++ss;continue;} 
+              return false;
+          }
+          while (p[pindex]=='*'){pindex++;}
+          return pindex==p.size();  
+      }
+  };
+  ```
+
+- 
+

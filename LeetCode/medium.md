@@ -625,3 +625,56 @@ public:
 
 - Time complexity : O(n). In worst case, only two scans of the whole array are needed.
 - Space complexity : O(1). No extra space is used. In place replacements are done.
+
+## 50 . Pow(x, n)
+
+Recursive
+
+```C++
+class Solution {
+public:
+    double myPow(double x, int n) {
+    long long n1 = n;
+        if(n<0)
+            return 1.0/help(x,-n1);
+        else
+            return help(x,n1);
+    }
+    double help(double x,long long n)
+    {
+          if(n==0)
+        	return 1.0;
+    double half = myPow(x, n/2);
+    return n%2 ==0 ? half*half : half*half*x ;    
+    }
+};
+```
+
+**Iterative**
+
+
+
+    class Solution {
+    public:
+        double myPow(double x, int n) {
+            long long n1 = n;
+            if(n<0)
+                return 1.0/help(x,-n1);
+            else
+                return help(x,n1);
+        }
+        double help(double x,long long n)
+        {
+           double ans =1.0;
+           double prev=  x;
+            while(n>0)
+           {
+               if(n&1)
+                   ans = ans*prev;
+                prev = prev*prev;
+                n>>=1;
+           }
+            return ans;
+        }
+        
+    };
