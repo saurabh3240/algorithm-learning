@@ -434,5 +434,150 @@ https://leetcode.com/articles/trapping-rain-water/
   };
   ```
 
-- 
+
+
+
+##Word Break II
+
+Hard
+
+Given a **non-empty** string *s* and a dictionary *wordDict* containing a list of **non-empty** words, add spaces in *s* to construct a sentence where each word is a valid dictionary word. Return all such possible sentences.
+
+**Note:**
+
+- The same word in the dictionary may be reused multiple times in the segmentation.
+- You may assume the dictionary does not contain duplicate words.
+
+**Example 1:**
+
+```
+Input:
+s = "catsanddog"
+wordDict = ["cat", "cats", "and", "sand", "dog"]
+Output:
+[
+  "cats and dog",
+  "cat sand dog"
+]
+```
+
+
+
+```c++
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        vector<string> ans;   
+        cache.clear();
+        is_solution.clear();
+        set<string> ss = wordBreakUtil(s,wordDict);
+        if(is_solution[s]==1)
+           for(auto x : ss)
+                ans.push_back(x);
+        return ans;
+    }
+    set<string> wordBreakUtil(string s, vector<string>& wordDict)
+    {   if(s.size()==0)
+        {   set<string> ss;
+            is_solution[s]=1;
+            ss.insert("");
+            cache[s]=ss;
+            return ss;
+        }
+        if(is_solution[s]==-1)
+            return cache[s];
+        int flag=0;
+        for(int i=0 ;i <wordDict.size();i++)
+        {   int sz = wordDict[i].size();
+            if(s.size()>=sz && wordDict[i].compare(string(s.begin(),s.begin()+sz))==0)
+            {   string rec = string(s.begin()+sz, s.end());
+                set<string> temp;
+                if(is_solution[rec]==0)
+                    wordBreakUtil(rec, wordDict);
+                else if(is_solution[rec]==-1)
+                    continue;
+                temp =cache[rec];
+                for(string x: temp) 
+                {   string b = wordDict[i];
+                    if(x.size()>0)
+                        b = b+" "+x;
+                    flag =1;
+                    cache[s].insert(b);
+                }
+            }
+        }
+        if(flag==1)
+            is_solution[s]=1;
+        else
+            is_solution[s]=-1;
+        return cache[s];
+    }
+    private:
+        unordered_map<string,set<string> > cache;
+        unordered_map<string,int> is_solution;
+};
+```
+
+
+
+
+
+146. LRU Cache
+
+Design and implement a data structure for [Least Recently Used (LRU) cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU). It should support the following operations: `get` and `put`.
+
+`get(key)` - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
+`put(key, value)` - Set or insert the value if the key is not already present. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item.
+
+**Follow up:**
+Could you do both operations in **O(1)** time complexity?
+
+```c++
+typedef  list<int > LI;  
+class LRUCache {
+    unordered_map<int, pair<int,LI::iterator> >  cache;
+     LI used;
+    int cap;
+public:
+    void touch(auto it)
+    {
+        int key = it->first;
+        used.erase(it->second.second);
+        used.push_front(key);
+       it->second.second =used.begin();
+    }
+    LRUCache(int capacity) {
+        cap = capacity;
+    }
+    
+    int get(int key) {
+        auto it = cache.find(key);
+        if(it==cache.end())
+            return -1;
+        touch(it);
+        return it->second.first;
+    }
+    
+    void put(int key, int value) {
+        auto it = cache.find(key);
+        if(it!=cache.end()) touch(it);
+        else{
+            if(cache.size()==cap)
+            {
+                cache.erase(used.back());
+                used.pop_back();
+            }
+            used.push_front(key);            
+        }
+        cache[key] = {value, used.begin()};
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+```
 

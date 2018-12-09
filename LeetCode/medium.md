@@ -654,27 +654,93 @@ public:
 
 
 
-    class Solution {
-    public:
-        double myPow(double x, int n) {
-            long long n1 = n;
-            if(n<0)
-                return 1.0/help(x,-n1);
-            else
-                return help(x,n1);
-        }
-        double help(double x,long long n)
-        {
-           double ans =1.0;
-           double prev=  x;
-            while(n>0)
-           {
-               if(n&1)
-                   ans = ans*prev;
-                prev = prev*prev;
-                n>>=1;
-           }
-            return ans;
-        }
+```c++
+class Solution {
+public:
+    double myPow(double x, int n) {
+        long long n1 = n;
+        if(n<0)
+            return 1.0/help(x,-n1);
+        else
+            return help(x,n1);
+    }
+    double help(double x,long long n)
+    {
+       double ans =1.0;
+       double prev=  x;
+        while(n>0)
+       {
+           if(n&1)
+               ans = ans*prev;
+            prev = prev*prev;
+            n>>=1;
+       }
+        return ans;
+    }
+    
+
+```
+
+## 139 Word Break
+
+Given a **non-empty** string *s* and a dictionary *wordDict* containing a list of **non-empty** words, determine if *s* can be segmented into a space-separated sequence of one or more dictionary words.
+
+**Note:**
+
+- The same word in the dictionary may be reused multiple times in the segmentation.
+- You may assume the dictionary does not contain duplicate words.
+
+**Example 1:**
+
+```
+Input: s = "leetcode", wordDict = ["leet", "code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+```
+
+
+
+Solution
+
+DFS+DP + recusrive O(n*m* x average length of wordDict)
+
+Can be be solved by hashing string in Robin Karp manner.
+
+
+
+```c++
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
         
-    };
+        cache.clear();
+    return wordBreakUtil(s,wordDict);
+    }
+    bool wordBreakUtil(string s, vector<string>& wordDict)
+    {
+        if(s.size()==0)
+            return true;
+        if(cache[s]!=0)
+        {
+            return (cache[s]==1)?true: false;
+        }
+        for(int i=0;i<wordDict.size();i++)
+        {
+            int sz = wordDict[i].size();
+            
+            if(s.size()>=sz &&  wordDict[i].compare(string(s.begin(),s.begin()+sz))==0)
+            {
+                if (wordBreakUtil(string(s.begin()+sz,s.end()),wordDict))
+                {   cache[s]  = 1;  
+                    return true;
+                }
+            }
+        }        
+        cache[s] = -1;
+        return false;
+    }
+    private:
+        map<string,int> cache;
+};
+```
+

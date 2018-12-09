@@ -27,7 +27,6 @@ The brute force approach is simple. Loop through each element xx and find if the
 
 - Space complexity : O(1). 
 
-
 ------
 
 #### Approach 2: Two-pass Hash Table
@@ -43,7 +42,6 @@ A simple implementation uses two iterations. In the first iteration, we add each
 - Time complexity : O(n) 
 
 - Space complexity : O(n)).
-
 
 ------
 
@@ -62,3 +60,44 @@ It turns out we can do it in one-pass. While we iterate and inserting elements i
 
 
 
+
+
+##Min Stack
+
+Easy
+
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+- push(x) -- Push element x onto stack.
+- pop() -- Removes the element on top of the stack.
+- top() -- Get the top element.
+- getMin() -- Retrieve the minimum element in the stack.
+
+
+
+**Example:**
+
+```
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> Returns -3.
+minStack.pop();
+minStack.top();      --> Returns 0.
+minStack.getMin();   --> Returns -2.
+```
+
+
+
+Fun to solve with one stack
+
+use difference b/w min and top element to track min and top both
+
+2 0 -1 3 -3 5 -7
+
+​    		^	
+
+Min = -2
+
+St 0 2 1 5 -1

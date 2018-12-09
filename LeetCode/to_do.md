@@ -12,16 +12,17 @@
 - 56 Merge Intervals	25.3%     Hard
 - 57 Insert Interval	23.8%     Hard
 - 66 Plus One	33.5%     Easy
+- 128 Longest Consecutive Sequence	32.1%     Hard
+- 133 Clone Graph	24.9%     Medium (WORST PROBLEM NO EDITOR TO DEBUG)
+- 139 Word Break	25.2%     Medium
+- 140 Word Break II	19.7%     Hard (Revisit it)
+- 146 LRU Cache	15.8%     Hard (Revisit it)
+- 155 Min Stack	22.0%     Easy
 
 ##TO-DO:
+
 **4 Median of Two Sorted Arrays 18.6%         Hard**
 
-128 Longest Consecutive Sequence	32.1%     Hard
-133 Clone Graph	24.9%     Medium
-139 Word Break	25.2%     Medium
-140 Word Break II	19.7%     Hard
-146 LRU Cache	15.8%     Hard
-155 Min Stack	22.0%     Easy
 158 Read N Characters Given Read4 II – Call multiple times	23.4%	Hard
 159 Longest Substring with At Most Two Distinct Characters	34.7%	Hard
 162 Find Peak Element	33.0%	Medium
