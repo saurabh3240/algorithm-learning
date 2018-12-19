@@ -481,7 +481,7 @@ public:
 ```
 **Complexity Analysis**
 
-- Time Complexity : O(2^{2n}n). For each of 2^{2n}sequences, we need to create and validate the sequence, which takes O(n)O(n) work.
+- Time Complexity : O(2^{2n}n). For each of 2^{2n}sequences, we need to create and validate the sequence, which takes O(n) work.
 
 - Space Complexity : O(2^{2n}n)O(22nn). Naively, every sequence could be valid. See [Approach 3](https://leetcode.com/articles/generate-parentheses/#approach-3-closure-number) for development of a tighter asymptotic bound. 
 

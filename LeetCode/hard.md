@@ -226,7 +226,6 @@ public:
 };
 ```
 
-
 **Complexity Analysis**
 
 - Time complexity : O(kN)O(kN) where \text{k}k is the number of linked lists.
